@@ -1,0 +1,270 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CompanyStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  ARCHIVED
+}
+
+enum RoleKey {
+  SUPER_ADMIN
+  COMPANY_ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+
+enum OperationStatus {
+  PLANNING
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum MasterDataType {
+  CLIENT
+  PRODUCT
+  WAREHOUSE
+  DESTINATION
+  CARRIER
+  HOLD
+  SHIFT
+  STATUS
+  BERTH
+  PLATE
+}
+
+model Company {
+  id             String               @id @default(cuid())
+  name           String
+  slug           String               @unique
+  status         CompanyStatus        @default(ACTIVE)
+  plan           String               @default("standard")
+  userLimit      Int                  @default(25)
+  operationLimit Int                  @default(50)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  deletedAt      DateTime?
+  companyUsers   CompanyUser[]
+  masterData     MasterDataItem[]
+  operations     Operation[]
+  auditLogs      AuditLog[]
+  resetTokens    PasswordResetToken[]
+}
+
+model User {
+  id           String               @id @default(cuid())
+  name         String
+  email        String               @unique
+  passwordHash String
+  lastLoginAt  DateTime?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  deletedAt    DateTime?
+  companyUsers CompanyUser[]
+  createdLogs  AuditLog[]           @relation("AuditActor")
+  resetTokens  PasswordResetToken[]
+}
+
+model CompanyUser {
+  id        String   @id @default(cuid())
+  companyId String
+  userId    String
+  roleId    String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
+
+  @@unique([companyId, userId])
+  @@index([userId])
+  @@index([companyId, roleId])
+}
+
+model Role {
+  id           String           @id @default(cuid())
+  key          RoleKey          @unique
+  name         String
+  description  String?
+  companyUsers CompanyUser[]
+  permissions  RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  module      String
+  action      String
+  description String?
+  roles       RolePermission[]
+
+  @@unique([module, action])
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId])
+}
+
+model MasterDataItem {
+  id        String         @id @default(cuid())
+  companyId String
+  type      MasterDataType
+  name      String
+  code      String
+  active    Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  deletedAt DateTime?
+  company   Company        @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, type, code])
+  @@index([companyId, type])
+}
+
+model Operation {
+  id               String            @id @default(cuid())
+  companyId        String
+  code             String
+  vesselName       String
+  berth            String
+  importer         String?
+  productSummary   String?
+  status           OperationStatus   @default(PLANNING)
+  startedAt        DateTime
+  berthedAt        DateTime?
+  completedAt      DateTime?
+  createdById      String?
+  updatedById      String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+  company          Company           @relation(fields: [companyId], references: [id])
+  holds            OperationHold[]
+  planningItems    PlanningItem[]
+  dischargeRecords DischargeRecord[]
+
+  @@unique([companyId, code])
+  @@index([companyId, status, startedAt])
+}
+
+model OperationHold {
+  id          String             @id @default(cuid())
+  operationId String
+  name        String
+  code        String
+  plannedTons Decimal            @db.Decimal(14, 3)
+  operation   Operation          @relation(fields: [operationId], references: [id])
+  itemHolds   PlanningItemHold[]
+  records     DischargeRecord[]
+
+  @@unique([operationId, code])
+}
+
+model PlanningItem {
+  id               String             @id @default(cuid())
+  companyId        String
+  operationId      String
+  sequence         Int
+  di               String
+  client           String
+  product          String
+  quantityTons     Decimal            @db.Decimal(14, 3)
+  situation        String             @default("IN_PROGRESS")
+  warehouse        String
+  destination      String
+  carrier          String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+  operation        Operation          @relation(fields: [operationId], references: [id])
+  holds            PlanningItemHold[]
+  dischargeRecords DischargeRecord[]
+
+  @@unique([operationId, sequence])
+  @@index([companyId, operationId])
+}
+
+model PlanningItemHold {
+  id             String        @id @default(cuid())
+  planningItemId String
+  holdId         String
+  tons           Decimal       @db.Decimal(14, 3)
+  planningItem   PlanningItem  @relation(fields: [planningItemId], references: [id])
+  hold           OperationHold @relation(fields: [holdId], references: [id])
+
+  @@unique([planningItemId, holdId])
+}
+
+model DischargeRecord {
+  id                 String        @id @default(cuid())
+  companyId          String
+  operationId        String
+  planningItemId     String
+  holdId             String
+  date               DateTime
+  shift              String
+  netWeightTons      Decimal       @db.Decimal(14, 3)
+  plate              String?
+  ticket             String?
+  entryTime          String?
+  exitTime           String?
+  serviceTimeMinutes Int?
+  notes              String?
+  isSweep            Boolean       @default(false)
+  createdById        String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  deletedAt          DateTime?
+  operation          Operation     @relation(fields: [operationId], references: [id])
+  planningItem       PlanningItem  @relation(fields: [planningItemId], references: [id])
+  hold               OperationHold @relation(fields: [holdId], references: [id])
+
+  @@unique([operationId, ticket])
+  @@index([companyId, operationId, date])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  companyId String?
+  actorId   String?
+  action    String
+  entity    String
+  recordId  String?
+  before    Json?
+  after     Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  company   Company? @relation(fields: [companyId], references: [id])
+  actor     User?    @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([companyId, entity, createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  companyId String
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
