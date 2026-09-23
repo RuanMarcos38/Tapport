@@ -11,7 +11,7 @@ export default async function NewOperationPage() {
       <form action={createOperationAction} className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
         <label className="block text-sm font-semibold">
           Navio
-          <input name="vesselName" placeholder="MV HORIZON" className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3" />
+          <input name="vesselName" placeholder="Nome do navio" className="mt-1 h-10 w-full rounded-md border border-slate-200 px-3" />
         </label>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block text-sm font-semibold">

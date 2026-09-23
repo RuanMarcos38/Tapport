@@ -13,7 +13,7 @@ export default function PublicHomePage() {
       </header>
       <section className="mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl items-center gap-10 px-6 py-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <div className="text-sm font-semibold uppercase text-sky-300">São Francisco do Sul</div>
+          <div className="text-sm font-semibold uppercase text-sky-300">Gestão portuária em produção</div>
           <h1 className="mt-6 max-w-3xl text-6xl font-bold tracking-normal max-sm:text-4xl">
             A operação portuária no ritmo da balança.
           </h1>
@@ -30,17 +30,17 @@ export default function PublicHomePage() {
           </div>
         </div>
         <div className="rounded-lg border border-white/10 bg-white p-5 text-slate-950 shadow-2xl">
-          <div className="text-xs font-semibold uppercase text-slate-500">Tapport · MV HORIZON</div>
+          <div className="text-xs font-semibold uppercase text-slate-500">Tapport · Operação</div>
           <div className="mt-4 rounded-lg bg-slate-50 p-5">
             <div className="text-xs font-semibold uppercase text-sky-700">Capa da operação</div>
-            <h2 className="mt-2 text-3xl font-bold">MV HORIZON</h2>
-            <p className="mt-1 text-sm text-slate-500">Berço 102 · Soda Ash · São Francisco do Sul</p>
+            <h2 className="mt-2 text-3xl font-bold">Operação ativa</h2>
+            <p className="mt-1 text-sm text-slate-500">Planejamento, descarga e balança sincronizados</p>
             <div className="mt-5 grid grid-cols-2 gap-3">
               {[
-                ["Planejado", "37.527 t"],
-                ["Descarregado", "25.470 t"],
-                ["Saldo", "12.057 t"],
-                ["Caminhões", "70"]
+                ["Planejado", "Atualizado"],
+                ["Descarregado", "Online"],
+                ["Saldo", "Calculado"],
+                ["Caminhões", "Rastreáveis"]
               ].map(([label, value]) => (
                 <div key={label} className="rounded-lg border border-slate-200 bg-white p-4">
                   <div className="text-xs font-semibold uppercase text-slate-500">{label}</div>
@@ -49,7 +49,7 @@ export default function PublicHomePage() {
               ))}
             </div>
             <div className="mt-5 rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-900">
-              Porão 02 aceita mais duas viagens. Se o ritmo seguir, fecha no próximo turno.
+              Cada tenant trabalha somente com seus próprios dados, usuários e permissões.
             </div>
           </div>
         </div>
@@ -57,4 +57,3 @@ export default function PublicHomePage() {
     </main>
   );
 }
-

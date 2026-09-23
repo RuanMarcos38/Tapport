@@ -38,27 +38,15 @@ export default async function LoginPage({
           {params.error ? <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">Credenciais inválidas.</div> : null}
           {params.reset ? <div className="mt-4 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700">Senha redefinida. Entre novamente.</div> : null}
 
-          <div className="mt-6 rounded-lg bg-slate-50 p-4 text-sm">
-            <div className="font-semibold text-slate-900">Credenciais demo</div>
-            <p className="mt-1 text-slate-500">Tenant: atlantico · Senha: demo123</p>
-            <div className="mt-3 grid gap-2">
-              {["admin@atlantico.demo", "gerente@atlantico.demo", "operador@atlantico.demo", "cliente@atlantico.demo"].map((email) => (
-                <div key={email} className="rounded-md border border-slate-200 bg-white px-3 py-2 text-slate-700">
-                  {email}
-                </div>
-              ))}
-            </div>
-          </div>
-
           <form action={loginAction} className="mt-6 space-y-4">
             <input type="hidden" name="next" value={params.next ?? "/dashboard"} />
             <label className="block text-sm font-semibold text-slate-700">
               Tenant / empresa
-              <input name="tenantSlug" defaultValue={params.tenant ?? "atlantico"} className="mt-1 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 outline-none focus:border-sky-500" />
+              <input name="tenantSlug" defaultValue={params.tenant ?? ""} placeholder="slug-da-empresa" className="mt-1 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 outline-none focus:border-sky-500" />
             </label>
             <label className="block text-sm font-semibold text-slate-700">
               E-mail corporativo
-              <input name="email" type="email" defaultValue={params.email ?? ""} placeholder="exemplo@empresa.com" className="mt-1 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 outline-none focus:border-sky-500" />
+              <input name="email" type="email" defaultValue={params.email ?? ""} placeholder="usuario@empresa.com" className="mt-1 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 outline-none focus:border-sky-500" />
             </label>
             <label className="block text-sm font-semibold text-slate-700">
               Senha
@@ -82,4 +70,3 @@ export default async function LoginPage({
     </main>
   );
 }
-

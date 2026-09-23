@@ -2,8 +2,6 @@
 
 Tapport é um SaaS multiempresa para gestão portuária: operações de descarga, planejamento, balança, relatórios, cadastros, usuários, permissões e auditoria.
 
-O produto foi reconstruído com código original a partir da auditoria visual e funcional do PortLine, usando a identidade TAPPORT e uma arquitetura própria com isolamento multiempresa.
-
 ## Tecnologias
 
 - Next.js App Router
@@ -36,6 +34,17 @@ pnpm dev
 - `AUTH_SECRET`: segredo longo para assinar sessões HTTP-only.
 - `NEXT_PUBLIC_APP_URL`: URL pública da aplicação.
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_SECURE`: envio de e-mail transacional para recuperação de senha.
+- `BOOTSTRAP_*`: criação controlada do tenant e administrador inicial de produção durante `pnpm db:seed`.
+
+Para criar a primeira empresa em produção, defina pelo menos:
+
+- `BOOTSTRAP_COMPANY_NAME`
+- `BOOTSTRAP_COMPANY_SLUG`
+- `BOOTSTRAP_ADMIN_NAME`
+- `BOOTSTRAP_ADMIN_EMAIL`
+- `BOOTSTRAP_ADMIN_PASSWORD`
+
+O seed sempre aplica RBAC. Ele só cria empresa e usuários quando as variáveis acima estão preenchidas.
 
 ## Banco de dados
 

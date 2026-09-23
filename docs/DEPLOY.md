@@ -19,9 +19,10 @@ pnpm build
 1. Criar banco PostgreSQL.
 2. Definir `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_APP_URL` e variáveis `SMTP_*`.
 3. Executar migrations.
-4. Executar seed inicial quando for ambiente demo.
+4. Definir `BOOTSTRAP_COMPANY_*` e `BOOTSTRAP_ADMIN_*` para criar o tenant inicial.
 5. Rodar `pnpm build`.
 6. Publicar em Vercel, Docker ou servidor Node.
+7. Executar `pnpm db:seed` uma vez para aplicar RBAC e criar o primeiro administrador.
 
 ## Observações
 
