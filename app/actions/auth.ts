@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createSession, clearSession, requireSession } from "@/lib/auth";
+import { sendPasswordResetEmail } from "@/lib/mailer";
 import { hashPassword, verifyPassword } from "@/lib/password";
 
 export async function loginAction(formData: FormData) {
@@ -81,7 +82,17 @@ export async function requestPasswordResetAction(formData: FormData) {
         expiresAt: new Date(Date.now() + 1000 * 60 * 30)
       }
     });
-    console.info(`Tapport reset token for ${email}: ${token}`);
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const resetUrl = new URL(`/reset-password?token=${token}`, appUrl).toString();
+    const emailResult = await sendPasswordResetEmail({
+      to: membership.user.email,
+      name: membership.user.name,
+      companyName: membership.company.name,
+      resetUrl
+    });
+    if (!emailResult.sent && process.env.NODE_ENV !== "production") {
+      console.info(`Tapport reset URL for ${email}: ${resetUrl}`);
+    }
   }
 
   redirect("/forgot-password?sent=1");
@@ -136,4 +147,3 @@ export async function updateProfileAction(formData: FormData) {
   revalidatePath("/perfil");
   redirect("/perfil?saved=1");
 }
-

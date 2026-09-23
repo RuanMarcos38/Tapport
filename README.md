@@ -35,6 +35,7 @@ pnpm dev
 - `DATABASE_URL`: conexão PostgreSQL.
 - `AUTH_SECRET`: segredo longo para assinar sessões HTTP-only.
 - `NEXT_PUBLIC_APP_URL`: URL pública da aplicação.
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_SECURE`: envio de e-mail transacional para recuperação de senha.
 
 ## Banco de dados
 
@@ -79,6 +80,10 @@ pnpm dev
 pnpm build
 pnpm start
 ```
+
+Healthcheck:
+
+- `GET /api/health` valida runtime, conexão PostgreSQL e presença de configuração SMTP.
 
 ## Qualidade
 

@@ -3,6 +3,7 @@
 - [ ] Login com tenant/e-mail/senha.
 - [ ] Logout.
 - [ ] Recuperação de senha.
+- [ ] Recuperação de senha envia e-mail real via SMTP.
 - [ ] Proteção de rotas.
 - [ ] Dashboard com dados reais.
 - [ ] Operações com busca/filtro/paginação.
@@ -25,6 +26,7 @@
 - [ ] Sem overflow horizontal acidental fora de tabelas controladas.
 - [ ] Build de produção.
 - [ ] Testes automatizados principais.
+- [ ] `/api/health` retorna `status: ok` e `database: ok` no domínio de produção.
 
 ## Validação automatizada executada
 
